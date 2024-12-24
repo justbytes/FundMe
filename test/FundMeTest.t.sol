@@ -7,8 +7,8 @@ import {DeployFundMe} from "../script/DeoployFundMe.s.sol";
 contract FundMeTest is Test {
     FundMe fundMe;
     address USER = makeAddr("user");
-    uint256 constant SEND_VALUE = 1 ether;
-    uint256 constant STARTING_BALANCE = 100 ether;
+    uint256 constant SEND_VALUE = 5e18;
+    uint256 constant STARTING_BALANCE = 100e18;
 
     function setUp() external {
         DeployFundMe deployFundMe = new DeployFundMe();
@@ -16,41 +16,35 @@ contract FundMeTest is Test {
         vm.deal(USER, STARTING_BALANCE);
     }
 
-    // function testMinimumDollarIsFive() public view {
-    //     assertEq(fundMe.MINIMUM_USD(), 5e18);
-    // }
+    function testMinimumDollarIsFive() public view {
+        assertEq(fundMe.MINIMUM_USD(), 5e18);
+    }
 
-    // function testOwnerIsMsgSender() public view {
-    //     assertEq(fundMe.i_owner(), msg.sender);
-    // }
+    function testOwnerIsMsgSender() public view {
+        assertEq(fundMe.i_owner(), msg.sender);
+    }
 
-    // function testPriceFeedVersionIsAccurate() public view {
-    //     uint256 version = fundMe.getVersion();
-    //     assertEq(version, 4);
-    // }
+    function testPriceFeedVersionIsAccurate() public view {
+        uint256 version = fundMe.getVersion();
+        assertEq(version, 4);
+    }
 
-    // function testFundFailsWithoutEnoughETH() public {
-    //     vm.expectRevert();
-    //     fundMe.fund();
-    // }
+    function testFundFailsWithoutEnoughETH() public {
+        vm.expectRevert();
+        fundMe.fund();
+    }
 
-    // function testPriceFeedIsWorking() public view {
-    //     (, int256 price, , , ) = fundMe.getPriceFeed().latestRoundData();
-    //     assertGt(price, 0); // Price should be greater than 0
-    // }
+    function testPriceFeedIsWorking() public view {
+        (, int256 price,,,) = fundMe.getPriceFeed().latestRoundData();
+        assertGt(price, 0); // Price should be greater than 0
+    }
+
     function testFundUpdatesFundedDataStructure() public {
+        // Add debug logs to check price feed
+        (, int256 price,,,) = fundMe.getPriceFeed().latestRoundData();
+        console.log("ETH/USD price:", uint256(price));
+
         vm.prank(USER);
-
-        // Log min USD requirement
-        console.log("Minimum USD required:", fundMe.MINIMUM_USD());
-
-        // Log ETH price from feed
-        (, int256 price, , , ) = fundMe.getPriceFeed().latestRoundData();
-        console.log("ETH/USD price from feed:", uint256(price));
-
-        // Log the value we're sending
-        console.log("Sending ETH value:", SEND_VALUE);
-
         fundMe.fund{value: SEND_VALUE}();
 
         uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
