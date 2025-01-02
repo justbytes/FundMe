@@ -29,7 +29,7 @@ anvil :; anvil -m 'test test test test test test test test test test test junk' 
 zk-anvil :; npx zksync-cli dev start
 
 deploy-anvil:
-	forge script script/DeployFundMe.s.sol:DeployFundMe --rpc-url http://127.0.0.1:8545 --account defaultKey --sender 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 --broadcast -vvvv
+	forge script script/DeployFundMe.s.sol:DeployFundMe --rpc-url $(LOCAL_RPC_URL) --account $(LOCAL_ACCOUNT) --sender $(LOCAL_SENDER) --broadcast -vvvv
 
 deploy-sepolia: 
-	forge script script/DeployFundMe.s.sol:DeployFundMe --rpc-url $(SEPOLIA_RPC_URL) --account dev_acc --sender 0x984D18688F5eA45257AA6A48BC7F2F01b2c96E42 --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+	forge script script/DeployFundMe.s.sol:DeployFundMe --rpc-url $(SEPOLIA_RPC_URL) --account $(SEP_ACCOUNT) --sender $(SEP_SENDER) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
